@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const testimonials = [
   {
@@ -26,18 +27,42 @@ const testimonials = [
 
 const TestimonialsSection = () => {
   const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const { ref, isVisible } = useScrollReveal();
 
-  const next = () => setCurrent((c) => (c + 1) % testimonials.length);
-  const prev = () => setCurrent((c) => (c - 1 + testimonials.length) % testimonials.length);
+  const next = () => {
+    setDirection(1);
+    setCurrent((c) => (c + 1) % testimonials.length);
+  };
+  const prev = () => {
+    setDirection(-1);
+    setCurrent((c) => (c - 1 + testimonials.length) % testimonials.length);
+  };
 
   return (
-    <section className="py-24 md:py-32 bg-warm-bg">
-      <div className="container max-w-4xl px-6">
+    <section className="py-24 md:py-32 bg-warm-bg overflow-hidden">
+      <div
+        ref={ref}
+        className="container max-w-4xl px-6"
+        style={{
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? "translateY(0)" : "translateY(40px)",
+          transition: "all 0.8s ease-out",
+          perspective: "1000px",
+        }}
+      >
         <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground text-center mb-16">
           Don't Take Our Word for It.
         </h2>
-        <div className="relative">
-          <blockquote className="text-center">
+        <div className="relative" style={{ transformStyle: "preserve-3d" }}>
+          <blockquote
+            key={current}
+            className="text-center"
+            style={{
+              animation: `testimonial-flip-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards`,
+              transformOrigin: direction >= 0 ? "left center" : "right center",
+            }}
+          >
             <p className="text-lg md:text-xl leading-relaxed text-foreground/80 italic">
               "{testimonials[current].text}"
             </p>
@@ -48,7 +73,7 @@ const TestimonialsSection = () => {
           <div className="flex items-center justify-center gap-4 mt-10">
             <button
               onClick={prev}
-              className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors"
+              className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-all hover:scale-110 hover:shadow-lg"
               aria-label="Previous testimonial"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -58,7 +83,7 @@ const TestimonialsSection = () => {
             </span>
             <button
               onClick={next}
-              className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-colors"
+              className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-all hover:scale-110 hover:shadow-lg"
               aria-label="Next testimonial"
             >
               <ChevronRight className="w-4 h-4" />

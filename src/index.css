@@ -64,3 +64,14 @@
     @apply font-sans tracking-tight;
   }
 }
+
+@keyframes testimonial-flip-in {
+  0% {
+    opacity: 0;
+    transform: perspective(600px) rotateY(8deg) translateX(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(600px) rotateY(0deg) translateX(0);
+  }
+}
