@@ -1,22 +1,43 @@
 import { ArrowRight } from "lucide-react";
 import ctaBg from "@/assets/cta-bg.jpg";
+import { useParallax } from "@/hooks/use-parallax";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 
 const Footer = () => {
+  const { ref: parallaxRef, offset } = useParallax(0.12);
+  const { ref: ctaReveal, isVisible } = useScrollReveal();
+
   return (
     <>
       {/* CTA Section */}
-      <section className="relative py-32 overflow-hidden">
+      <section ref={parallaxRef} className="relative py-32 overflow-hidden">
         <div className="absolute inset-0">
-          <img src={ctaBg} alt="NYC skyline" className="w-full h-full object-cover" loading="lazy" width={1920} height={800} />
+          <img
+            src={ctaBg}
+            alt="NYC skyline"
+            className="w-full h-full object-cover will-change-transform"
+            style={{ transform: `translateY(${offset * 0.4}px) scale(1.1)` }}
+            loading="lazy"
+            width={1920}
+            height={800}
+          />
           <div className="absolute inset-0 bg-foreground/60" />
         </div>
-        <div className="relative z-10 text-center px-6">
+        <div
+          ref={ctaReveal}
+          className="relative z-10 text-center px-6"
+          style={{
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? "translateY(0) scale(1)" : "translateY(30px) scale(0.96)",
+            transition: "all 0.9s cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
+        >
           <h2 className="text-4xl md:text-6xl font-bold text-primary-foreground tracking-tight">
             Find You. We'll Help You Get There.
           </h2>
           <a
             href="#"
-            className="inline-flex items-center gap-2 mt-10 bg-primary-foreground text-foreground px-8 py-4 rounded-full text-sm font-medium hover:bg-primary-foreground/90 transition-all group"
+            className="inline-flex items-center gap-2 mt-10 bg-primary-foreground text-foreground px-8 py-4 rounded-full text-sm font-medium hover:bg-primary-foreground/90 transition-all group hover:shadow-[0_20px_60px_-15px_hsl(var(--primary-foreground)/0.5)] hover:-translate-y-1"
           >
             Let's Get Started
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
